@@ -18,14 +18,20 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
+    - name: Check environment
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Files in repo:"
+        ls -la
+        echo "Gradlew exists?"
+        test -f gradlew && echo "YES" || echo "NO"
+
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew build -x test --info 2>&1 | tail -200
+    - name: Run Gradle build
+      run: ./gradlew build
 
-    - name: Check for errors
-      run: |
-        echo "=== Checking build output ==="
-        ls -la build/libs/ || echo "No build/libs directory"
-        ls -la build/ || echo "No build directory"
+    - name: Check build results
+      run: find . -name "*.jar" -type f
