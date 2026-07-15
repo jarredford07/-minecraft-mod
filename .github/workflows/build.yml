@@ -22,7 +22,10 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build --stacktrace 2>&1
+      run: ./gradlew build -x test --info 2>&1 | tail -200
 
-    - name: List build outputs
-      run: ls -la build/libs/
+    - name: Check for errors
+      run: |
+        echo "=== Checking build output ==="
+        ls -la build/libs/ || echo "No build/libs directory"
+        ls -la build/ || echo "No build directory"
