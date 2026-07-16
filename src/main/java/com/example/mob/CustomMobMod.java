@@ -10,11 +10,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShovelItem;
+import net.minecraft.item.SwordItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -22,10 +25,15 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
+
+import java.util.function.IntConsumer;
 
 public class CustomMobMod implements ModInitializer {
 
 	public static EntityType<CustomCreeperEntity> CUSTOM_CREEPER;
+
+	public static IntConsumer extraBlocksBrokenCallback = amount -> {};
 
 	public static final Item BURGER = new Item(new Item.Settings().food(
 		new FoodComponent.Builder()
@@ -39,6 +47,17 @@ public class CustomMobMod implements ModInitializer {
 	public static final Block TRAMPOLINE = new TrampolineBlock(AbstractBlock.Settings.copy(Blocks.SLIME_BLOCK));
 
 	public static final BlockItem TRAMPOLINE_ITEM = new BlockItem(TRAMPOLINE, new Item.Settings());
+
+	public static final SwordItem EMERALD_SWORD = new SwordItem(EmeraldToolMaterial.INSTANCE, 3, -2.4f, new Item.Settings());
+	public static final EmeraldPickaxeItem EMERALD_PICKAXE = new EmeraldPickaxeItem(new Item.Settings());
+	public static final EmeraldAxeItem EMERALD_AXE = new EmeraldAxeItem(new Item.Settings());
+	public static final ShovelItem EMERALD_SHOVEL = new ShovelItem(EmeraldToolMaterial.INSTANCE, 1.5f, -3.0f, new Item.Settings());
+	public static final EmeraldHoeItem EMERALD_HOE = new EmeraldHoeItem(new Item.Settings());
+
+	public static final ArmorItem EMERALD_HELMET = new ArmorItem(EmeraldArmorMaterial.INSTANCE, ArmorItem.Type.HELMET, new Item.Settings());
+	public static final ArmorItem EMERALD_CHESTPLATE = new ArmorItem(EmeraldArmorMaterial.INSTANCE, ArmorItem.Type.CHESTPLATE, new Item.Settings());
+	public static final ArmorItem EMERALD_LEGGINGS = new ArmorItem(EmeraldArmorMaterial.INSTANCE, ArmorItem.Type.LEGGINGS, new Item.Settings());
+	public static final ArmorItem EMERALD_BOOTS = new ArmorItem(EmeraldArmorMaterial.INSTANCE, ArmorItem.Type.BOOTS, new Item.Settings());
 
 	public static final RegistryKey<ItemGroup> CUSTOM_GROUP = RegistryKey.of(
 		RegistryKeys.ITEM_GROUP,
@@ -62,6 +81,16 @@ public class CustomMobMod implements ModInitializer {
 		Registry.register(Registries.BLOCK, new Identifier("custommob", "trampoline"), TRAMPOLINE);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "trampoline"), TRAMPOLINE_ITEM);
 
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_sword"), EMERALD_SWORD);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_pickaxe"), EMERALD_PICKAXE);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_axe"), EMERALD_AXE);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_shovel"), EMERALD_SHOVEL);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_hoe"), EMERALD_HOE);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_helmet"), EMERALD_HELMET);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_chestplate"), EMERALD_CHESTPLATE);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_leggings"), EMERALD_LEGGINGS);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_boots"), EMERALD_BOOTS);
+
 		Registry.register(
 			Registries.ITEM_GROUP,
 			CUSTOM_GROUP,
@@ -72,13 +101,22 @@ public class CustomMobMod implements ModInitializer {
 					entries.add(BURGER);
 					entries.add(TNT_PICKAXE);
 					entries.add(TRAMPOLINE_ITEM);
+					entries.add(EMERALD_SWORD);
+					entries.add(EMERALD_PICKAXE);
+					entries.add(EMERALD_AXE);
+					entries.add(EMERALD_SHOVEL);
+					entries.add(EMERALD_HOE);
+					entries.add(EMERALD_HELMET);
+					entries.add(EMERALD_CHESTPLATE);
+					entries.add(EMERALD_LEGGINGS);
+					entries.add(EMERALD_BOOTS);
 				})
 				.build()
 		);
 
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
 			if (!world.isClient() && player.getMainHandStack().getItem() == TNT_PICKAXE) {
-				world.createExplosion(
+				Explosion explosion = world.createExplosion(
 					player,
 					pos.getX() + 0.5,
 					pos.getY() + 0.5,
@@ -86,6 +124,8 @@ public class CustomMobMod implements ModInitializer {
 					4.0f,
 					World.ExplosionSourceType.TNT
 				);
+
+				extraBlocksBrokenCallback.accept(explosion.getAffectedBlocks().size());
 			}
 		});
 

@@ -2,6 +2,15 @@
   "item.custommob.burger": "Burger",
   "item.custommob.tnt_pickaxe": "TNT Pickaxe",
   "block.custommob.trampoline": "Trampoline",
+  "item.custommob.emerald_sword": "Emerald Sword",
+  "item.custommob.emerald_pickaxe": "Emerald Pickaxe",
+  "item.custommob.emerald_axe": "Emerald Axe",
+  "item.custommob.emerald_shovel": "Emerald Shovel",
+  "item.custommob.emerald_hoe": "Emerald Hoe",
+  "item.custommob.emerald_helmet": "Emerald Helmet",
+  "item.custommob.emerald_chestplate": "Emerald Chestplate",
+  "item.custommob.emerald_leggings": "Emerald Leggings",
+  "item.custommob.emerald_boots": "Emerald Boots",
   "itemGroup.custommob.custom_group": "Nash Lab",
   "entity.custommob.custom_creeper": "Custom Creeper"
 }
