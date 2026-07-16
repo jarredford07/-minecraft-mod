@@ -1,5 +1,6 @@
 {
   "item.custommob.burger": "Burger",
-  "itemGroup.custommob.custom_group": "Custom Mob Mod",
+  "item.custommob.tnt_pickaxe": "TNT Pickaxe",
+  "itemGroup.custommob.custom_group": "Nash Lab",
   "entity.custommob.custom_creeper": "Custom Creeper"
 }

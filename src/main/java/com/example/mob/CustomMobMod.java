@@ -1,6 +1,7 @@
 package com.example.mob;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
@@ -16,6 +17,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 public class CustomMobMod implements ModInitializer {
 
@@ -27,6 +29,8 @@ public class CustomMobMod implements ModInitializer {
 			.saturationModifier(0.8f)
 			.build()
 	));
+
+	public static final TntPickaxeItem TNT_PICKAXE = new TntPickaxeItem(new Item.Settings());
 
 	public static final RegistryKey<ItemGroup> CUSTOM_GROUP = RegistryKey.of(
 		RegistryKeys.ITEM_GROUP,
@@ -46,6 +50,7 @@ public class CustomMobMod implements ModInitializer {
 		FabricDefaultAttributeRegistry.register(CUSTOM_CREEPER, CreeperEntity.createCreeperAttributes());
 
 		Registry.register(Registries.ITEM, new Identifier("custommob", "burger"), BURGER);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "tnt_pickaxe"), TNT_PICKAXE);
 
 		Registry.register(
 			Registries.ITEM_GROUP,
@@ -53,9 +58,25 @@ public class CustomMobMod implements ModInitializer {
 			FabricItemGroup.builder()
 				.displayName(Text.translatable("itemGroup.custommob.custom_group"))
 				.icon(() -> new ItemStack(BURGER))
-				.entries((context, entries) -> entries.add(BURGER))
+				.entries((context, entries) -> {
+					entries.add(BURGER);
+					entries.add(TNT_PICKAXE);
+				})
 				.build()
 		);
+
+		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
+			if (!world.isClient() && player.getMainHandStack().getItem() == TNT_PICKAXE) {
+				world.createExplosion(
+					player,
+					pos.getX() + 0.5,
+					pos.getY() + 0.5,
+					pos.getZ() + 0.5,
+					4.0f,
+					World.ExplosionSourceType.TNT
+				);
+			}
+		});
 
 		System.out.println("Custom Mob Mod initialized!");
 	}
