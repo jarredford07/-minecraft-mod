@@ -13,7 +13,7 @@ public class CustomMobMod implements ModInitializer {
 		Registries.ENTITY_TYPE,
 		new Identifier("custommob", "custom_creeper"),
 		EntityType.Builder.create(CustomCreeperEntity::new, SpawnGroup.MONSTER)
-			.dimensions(0.6f, 1.7f)
+			.setDimensions(0.6f, 1.7f)
 			.build("custom_creeper")
 	);
 
