@@ -4,9 +4,13 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -32,6 +36,10 @@ public class CustomMobMod implements ModInitializer {
 
 	public static final TntPickaxeItem TNT_PICKAXE = new TntPickaxeItem(new Item.Settings());
 
+	public static final Block TRAMPOLINE = new TrampolineBlock(AbstractBlock.Settings.copy(Blocks.SLIME_BLOCK));
+
+	public static final BlockItem TRAMPOLINE_ITEM = new BlockItem(TRAMPOLINE, new Item.Settings());
+
 	public static final RegistryKey<ItemGroup> CUSTOM_GROUP = RegistryKey.of(
 		RegistryKeys.ITEM_GROUP,
 		new Identifier("custommob", "custom_group")
@@ -51,6 +59,8 @@ public class CustomMobMod implements ModInitializer {
 
 		Registry.register(Registries.ITEM, new Identifier("custommob", "burger"), BURGER);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "tnt_pickaxe"), TNT_PICKAXE);
+		Registry.register(Registries.BLOCK, new Identifier("custommob", "trampoline"), TRAMPOLINE);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "trampoline"), TRAMPOLINE_ITEM);
 
 		Registry.register(
 			Registries.ITEM_GROUP,
@@ -61,6 +71,7 @@ public class CustomMobMod implements ModInitializer {
 				.entries((context, entries) -> {
 					entries.add(BURGER);
 					entries.add(TNT_PICKAXE);
+					entries.add(TRAMPOLINE_ITEM);
 				})
 				.build()
 		);

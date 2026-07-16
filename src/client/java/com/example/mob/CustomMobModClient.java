@@ -16,9 +16,7 @@ public class CustomMobModClient implements ClientModInitializer {
 		EntityRendererRegistry.register(CustomMobMod.CUSTOM_CREEPER, CreeperEntityRenderer::new);
 
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
-			if (world.isClient()) {
-				blocksBroken++;
-			}
+			blocksBroken++;
 		});
 
 		HudRenderCallback.EVENT.register((context, tickDelta) -> {
