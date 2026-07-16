@@ -9,16 +9,18 @@ import net.minecraft.util.Identifier;
 
 public class CustomMobMod implements ModInitializer {
 
-	public static final EntityType<CustomCreeperEntity> CUSTOM_CREEPER = Registry.register(
-		Registries.ENTITY_TYPE,
-		new Identifier("custommob", "custom_creeper"),
-		EntityType.Builder.create(CustomCreeperEntity::new, SpawnGroup.MONSTER)
-			.setDimensions(0.6f, 1.7f)
-			.build("custom_creeper")
-	);
+	public static EntityType<CustomCreeperEntity> CUSTOM_CREEPER;
 
 	@Override
 	public void onInitialize() {
+		CUSTOM_CREEPER = Registry.register(
+			Registries.ENTITY_TYPE,
+			new Identifier("custommob", "custom_creeper"),
+			EntityType.Builder.create(CustomCreeperEntity::new, SpawnGroup.MONSTER)
+				.setDimensions(0.6f, 1.7f)
+				.build("custom_creeper")
+		);
+
 		System.out.println("Custom Mob Mod initialized!");
 	}
 }
