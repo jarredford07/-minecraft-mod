@@ -21,6 +21,8 @@ public class CustomMobModClient implements ClientModInitializer {
 
 		CustomMobMod.extraBlocksBrokenCallback = amount -> blocksBroken += amount;
 
+		MultiplierBlock.openScreenCallback = pos -> MinecraftClient.getInstance().setScreen(new MultiplierScreen(pos));
+
 		HudRenderCallback.EVENT.register((context, tickDelta) -> {
 			MinecraftClient client = MinecraftClient.getInstance();
 			context.drawText(

@@ -3,10 +3,14 @@ package com.example.mob;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.CreeperEntity;
@@ -24,12 +28,15 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
 import java.util.function.IntConsumer;
 
 public class CustomMobMod implements ModInitializer {
+
+	public static final Identifier SET_MULTIPLIER_CHANNEL = new Identifier("custommob", "set_multiplier");
 
 	public static EntityType<CustomCreeperEntity> CUSTOM_CREEPER;
 
@@ -47,6 +54,12 @@ public class CustomMobMod implements ModInitializer {
 	public static final Block TRAMPOLINE = new TrampolineBlock(AbstractBlock.Settings.copy(Blocks.SLIME_BLOCK));
 
 	public static final BlockItem TRAMPOLINE_ITEM = new BlockItem(TRAMPOLINE, new Item.Settings());
+
+	public static final Block MULTIPLIER = new MultiplierBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
+
+	public static final BlockItem MULTIPLIER_ITEM = new BlockItem(MULTIPLIER, new Item.Settings());
+
+	public static BlockEntityType<MultiplierBlockEntity> MULTIPLIER_BLOCK_ENTITY;
 
 	public static final SwordItem EMERALD_SWORD = new SwordItem(EmeraldToolMaterial.INSTANCE, 3, -2.4f, new Item.Settings());
 	public static final EmeraldPickaxeItem EMERALD_PICKAXE = new EmeraldPickaxeItem(new Item.Settings());
@@ -81,6 +94,14 @@ public class CustomMobMod implements ModInitializer {
 		Registry.register(Registries.BLOCK, new Identifier("custommob", "trampoline"), TRAMPOLINE);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "trampoline"), TRAMPOLINE_ITEM);
 
+		Registry.register(Registries.BLOCK, new Identifier("custommob", "multiplier"), MULTIPLIER);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "multiplier"), MULTIPLIER_ITEM);
+		MULTIPLIER_BLOCK_ENTITY = Registry.register(
+			Registries.BLOCK_ENTITY_TYPE,
+			new Identifier("custommob", "multiplier"),
+			BlockEntityType.Builder.create(MultiplierBlockEntity::new, MULTIPLIER).build(null)
+		);
+
 		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_sword"), EMERALD_SWORD);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_pickaxe"), EMERALD_PICKAXE);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "emerald_axe"), EMERALD_AXE);
@@ -101,6 +122,7 @@ public class CustomMobMod implements ModInitializer {
 					entries.add(BURGER);
 					entries.add(TNT_PICKAXE);
 					entries.add(TRAMPOLINE_ITEM);
+					entries.add(MULTIPLIER_ITEM);
 					entries.add(EMERALD_SWORD);
 					entries.add(EMERALD_PICKAXE);
 					entries.add(EMERALD_AXE);
@@ -127,6 +149,23 @@ public class CustomMobMod implements ModInitializer {
 
 				extraBlocksBrokenCallback.accept(explosion.getAffectedBlocks().size());
 			}
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(SET_MULTIPLIER_CHANNEL, (server, player, handler, buf, responseSender) -> {
+			BlockPos pos = buf.readBlockPos();
+			int value = buf.readInt();
+
+			server.execute(() -> {
+				World world = player.getWorld();
+				if (!world.isChunkLoaded(pos.getX() >> 4, pos.getZ() >> 4)) {
+					return;
+				}
+				BlockEntity blockEntity = world.getBlockEntity(pos);
+				BlockState state = world.getBlockState(pos);
+				if (blockEntity instanceof MultiplierBlockEntity multiplierEntity && state.getBlock() == MULTIPLIER) {
+					multiplierEntity.setMultiplier(value);
+				}
+			});
 		});
 
 		System.out.println("Custom Mob Mod initialized!");
