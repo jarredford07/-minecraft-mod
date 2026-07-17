@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShovelItem;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -39,6 +40,11 @@ public class CustomMobMod implements ModInitializer {
 	public static final Identifier SET_MULTIPLIER_CHANNEL = new Identifier("custommob", "set_multiplier");
 
 	public static EntityType<CustomCreeperEntity> CUSTOM_CREEPER;
+	public static EntityType<BananaFriendEntity> BANANA_FRIEND;
+	public static EntityType<CubeFriendEntity> CUBE_FRIEND;
+
+	public static SpawnEggItem BANANA_FRIEND_SPAWN_EGG;
+	public static SpawnEggItem CUBE_FRIEND_SPAWN_EGG;
 
 	public static IntConsumer extraBlocksBrokenCallback = amount -> {};
 
@@ -89,6 +95,28 @@ public class CustomMobMod implements ModInitializer {
 
 		FabricDefaultAttributeRegistry.register(CUSTOM_CREEPER, CreeperEntity.createCreeperAttributes());
 
+		BANANA_FRIEND = Registry.register(
+			Registries.ENTITY_TYPE,
+			new Identifier("custommob", "banana_friend"),
+			EntityType.Builder.create(BananaFriendEntity::new, SpawnGroup.CREATURE)
+				.setDimensions(0.8f, 0.8f)
+				.build("banana_friend")
+		);
+		FabricDefaultAttributeRegistry.register(BANANA_FRIEND, BananaFriendEntity.createBananaFriendAttributes());
+		BANANA_FRIEND_SPAWN_EGG = new SpawnEggItem(BANANA_FRIEND, 0xEBCD3C, 0x5A4123, new Item.Settings());
+		Registry.register(Registries.ITEM, new Identifier("custommob", "banana_friend_spawn_egg"), BANANA_FRIEND_SPAWN_EGG);
+
+		CUBE_FRIEND = Registry.register(
+			Registries.ENTITY_TYPE,
+			new Identifier("custommob", "cube_friend"),
+			EntityType.Builder.create(CubeFriendEntity::new, SpawnGroup.CREATURE)
+				.setDimensions(0.8f, 0.8f)
+				.build("cube_friend")
+		);
+		FabricDefaultAttributeRegistry.register(CUBE_FRIEND, CubeFriendEntity.createCubeFriendAttributes());
+		CUBE_FRIEND_SPAWN_EGG = new SpawnEggItem(CUBE_FRIEND, 0x4682DC, 0x19232D, new Item.Settings());
+		Registry.register(Registries.ITEM, new Identifier("custommob", "cube_friend_spawn_egg"), CUBE_FRIEND_SPAWN_EGG);
+
 		Registry.register(Registries.ITEM, new Identifier("custommob", "burger"), BURGER);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "tnt_pickaxe"), TNT_PICKAXE);
 		Registry.register(Registries.BLOCK, new Identifier("custommob", "trampoline"), TRAMPOLINE);
@@ -132,6 +160,8 @@ public class CustomMobMod implements ModInitializer {
 					entries.add(EMERALD_CHESTPLATE);
 					entries.add(EMERALD_LEGGINGS);
 					entries.add(EMERALD_BOOTS);
+					entries.add(BANANA_FRIEND_SPAWN_EGG);
+					entries.add(CUBE_FRIEND_SPAWN_EGG);
 				})
 				.build()
 		);

@@ -12,6 +12,10 @@
   "item.custommob.emerald_chestplate": "Emerald Chestplate",
   "item.custommob.emerald_leggings": "Emerald Leggings",
   "item.custommob.emerald_boots": "Emerald Boots",
+  "item.custommob.banana_friend_spawn_egg": "Banana Friend Spawn Egg",
+  "item.custommob.cube_friend_spawn_egg": "Cube Friend Spawn Egg",
   "itemGroup.custommob.custom_group": "Nash Lab",
-  "entity.custommob.custom_creeper": "Custom Creeper"
+  "entity.custommob.custom_creeper": "Custom Creeper",
+  "entity.custommob.banana_friend": "Banana Friend",
+  "entity.custommob.cube_friend": "Cube Friend"
 }

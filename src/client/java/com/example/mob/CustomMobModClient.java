@@ -1,6 +1,7 @@
 package com.example.mob;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -14,6 +15,12 @@ public class CustomMobModClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		EntityRendererRegistry.register(CustomMobMod.CUSTOM_CREEPER, CreeperEntityRenderer::new);
+
+		EntityModelLayerRegistry.registerModelLayer(BananaFriendEntityModel.LAYER, BananaFriendEntityModel::getTexturedModelData);
+		EntityRendererRegistry.register(CustomMobMod.BANANA_FRIEND, BananaFriendEntityRenderer::new);
+
+		EntityModelLayerRegistry.registerModelLayer(CubeFriendEntityModel.LAYER, CubeFriendEntityModel::getTexturedModelData);
+		EntityRendererRegistry.register(CustomMobMod.CUBE_FRIEND, CubeFriendEntityRenderer::new);
 
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
 			blocksBroken++;
