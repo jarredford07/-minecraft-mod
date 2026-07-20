@@ -14,8 +14,12 @@
   "item.custommob.emerald_boots": "Emerald Boots",
   "item.custommob.banana_friend_spawn_egg": "Banana Friend Spawn Egg",
   "item.custommob.cube_friend_spawn_egg": "Cube Friend Spawn Egg",
+  "item.custommob.car_spawner": "Car",
   "itemGroup.custommob.custom_group": "Nash Lab",
   "entity.custommob.custom_creeper": "Custom Creeper",
   "entity.custommob.banana_friend": "Banana Friend",
-  "entity.custommob.cube_friend": "Cube Friend"
+  "entity.custommob.cube_friend": "Cube Friend",
+  "entity.custommob.car": "Car",
+  "key.custommob.enter_car": "Enter/Exit Car",
+  "key.categories.custommob": "Custom Mob Mod"
 }

@@ -38,13 +38,18 @@ import java.util.function.IntConsumer;
 public class CustomMobMod implements ModInitializer {
 
 	public static final Identifier SET_MULTIPLIER_CHANNEL = new Identifier("custommob", "set_multiplier");
+	public static final Identifier ENTER_CAR_CHANNEL = new Identifier("custommob", "enter_car");
+	public static final Identifier CAR_INPUT_CHANNEL = new Identifier("custommob", "car_input");
 
 	public static EntityType<CustomCreeperEntity> CUSTOM_CREEPER;
 	public static EntityType<BananaFriendEntity> BANANA_FRIEND;
 	public static EntityType<CubeFriendEntity> CUBE_FRIEND;
+	public static EntityType<CarEntity> CAR;
 
 	public static SpawnEggItem BANANA_FRIEND_SPAWN_EGG;
 	public static SpawnEggItem CUBE_FRIEND_SPAWN_EGG;
+
+	public static final CarSpawnerItem CAR_SPAWNER = new CarSpawnerItem(new Item.Settings().maxCount(1));
 
 	public static IntConsumer extraBlocksBrokenCallback = amount -> {};
 
@@ -117,6 +122,15 @@ public class CustomMobMod implements ModInitializer {
 		CUBE_FRIEND_SPAWN_EGG = new SpawnEggItem(CUBE_FRIEND, 0x4682DC, 0x19232D, new Item.Settings());
 		Registry.register(Registries.ITEM, new Identifier("custommob", "cube_friend_spawn_egg"), CUBE_FRIEND_SPAWN_EGG);
 
+		CAR = Registry.register(
+			Registries.ENTITY_TYPE,
+			new Identifier("custommob", "car"),
+			EntityType.Builder.<CarEntity>create(CarEntity::new, SpawnGroup.MISC)
+				.setDimensions(1.6f, 1.1f)
+				.build("car")
+		);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "car_spawner"), CAR_SPAWNER);
+
 		Registry.register(Registries.ITEM, new Identifier("custommob", "burger"), BURGER);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "tnt_pickaxe"), TNT_PICKAXE);
 		Registry.register(Registries.BLOCK, new Identifier("custommob", "trampoline"), TRAMPOLINE);
@@ -162,6 +176,7 @@ public class CustomMobMod implements ModInitializer {
 					entries.add(EMERALD_BOOTS);
 					entries.add(BANANA_FRIEND_SPAWN_EGG);
 					entries.add(CUBE_FRIEND_SPAWN_EGG);
+					entries.add(CAR_SPAWNER);
 				})
 				.build()
 		);
@@ -194,6 +209,33 @@ public class CustomMobMod implements ModInitializer {
 				BlockState state = world.getBlockState(pos);
 				if (blockEntity instanceof MultiplierBlockEntity multiplierEntity && state.getBlock() == MULTIPLIER) {
 					multiplierEntity.setMultiplier(value);
+				}
+			});
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(ENTER_CAR_CHANNEL, (server, player, handler, buf, responseSender) -> {
+			int entityId = buf.readInt();
+
+			server.execute(() -> {
+				if (player.getVehicle() != null) {
+					return;
+				}
+				net.minecraft.entity.Entity target = player.getWorld().getEntityById(entityId);
+				if (target instanceof CarEntity car && player.squaredDistanceTo(car) < 36.0) {
+					player.startRiding(car);
+				}
+			});
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(CAR_INPUT_CHANNEL, (server, player, handler, buf, responseSender) -> {
+			boolean forward = buf.readBoolean();
+			boolean back = buf.readBoolean();
+			boolean left = buf.readBoolean();
+			boolean right = buf.readBoolean();
+
+			server.execute(() -> {
+				if (player.getVehicle() instanceof CarEntity car) {
+					car.setInputs(forward, back, left, right);
 				}
 			});
 		});
