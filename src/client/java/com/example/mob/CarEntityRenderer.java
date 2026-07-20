@@ -28,7 +28,7 @@ public class CarEntityRenderer extends EntityRenderer<CarEntity> {
 	@Override
 	public void render(CarEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
 		matrices.push();
-		matrices.translate(0.0, 0.55, 0.0);
+		matrices.translate(0.0, 0.25, 0.0);
 		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f - yaw));
 
 		VertexConsumer vertexConsumer = vertexConsumers.getBuffer(model.getLayer(TEXTURE));
