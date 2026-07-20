@@ -71,7 +71,9 @@ public class CustomMobModClient implements ClientModInitializer {
 			}
 
 			if (ENTER_CAR_KEY.wasPressed()) {
-				if (client.player.getVehicle() == null) {
+				if (client.player.getVehicle() instanceof CarEntity) {
+					client.player.stopRiding();
+				} else if (client.player.getVehicle() == null) {
 					java.util.List<Entity> nearby = client.world.getOtherEntities(
 						client.player,
 						client.player.getBoundingBox().expand(4.0),
