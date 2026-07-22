@@ -36,7 +36,7 @@ public class CustomMobModClient implements ClientModInitializer {
 	private static final KeyBinding FLAMETHROWER_KEY = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 		"key.custommob.flamethrower",
 		InputUtil.Type.KEYSYM,
-		GLFW.GLFW_KEY_TAB,
+		GLFW.GLFW_KEY_G,
 		"key.categories.custommob"
 	));
 
