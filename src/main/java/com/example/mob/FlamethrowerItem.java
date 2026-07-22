@@ -7,11 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -24,39 +20,17 @@ public class FlamethrowerItem extends Item {
 		super(settings);
 	}
 
-	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		user.setCurrentHand(hand);
-		return TypedActionResult.consume(user.getStackInHand(hand));
-	}
-
-	@Override
-	public int getMaxUseTime(ItemStack stack) {
-		return 72000;
-	}
-
-	@Override
-	public UseAction getUseAction(ItemStack stack) {
-		return UseAction.BOW;
-	}
-
-	@Override
-	public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-		if (world.isClient() || !(user instanceof PlayerEntity player)) {
-			return;
-		}
-
-		ServerWorld serverWorld = (ServerWorld) world;
-		Vec3d eyePos = user.getEyePos();
-		Vec3d look = user.getRotationVec(1.0f);
+	public static void fire(ServerWorld world, PlayerEntity player, ItemStack stack, int tickCounter) {
+		Vec3d eyePos = player.getEyePos();
+		Vec3d look = player.getRotationVec(1.0f);
 
 		for (int i = 1; i <= (int) RANGE; i++) {
 			Vec3d point = eyePos.add(look.multiply(i));
-			serverWorld.spawnParticles(ParticleTypes.FLAME, point.x, point.y, point.z, 2, 0.1, 0.1, 0.1, 0.01);
+			world.spawnParticles(ParticleTypes.FLAME, point.x, point.y, point.z, 2, 0.1, 0.1, 0.1, 0.01);
 		}
 
-		List<Entity> hit = world.getOtherEntities(user, user.getBoundingBox().expand(RANGE), entity -> {
-			if (!(entity instanceof LivingEntity) || entity == user) {
+		List<Entity> hit = world.getOtherEntities(player, player.getBoundingBox().expand(RANGE), entity -> {
+			if (!(entity instanceof LivingEntity) || entity == player) {
 				return false;
 			}
 			Vec3d toEntity = entity.getPos().subtract(eyePos);
@@ -74,7 +48,7 @@ public class FlamethrowerItem extends Item {
 			}
 		}
 
-		if (remainingUseTicks % 10 == 0) {
+		if (tickCounter % 10 == 0) {
 			stack.damage(1, player, p -> p.sendToolBreakStatus(player.getActiveHand()));
 		}
 	}

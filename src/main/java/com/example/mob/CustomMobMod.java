@@ -40,6 +40,7 @@ public class CustomMobMod implements ModInitializer {
 	public static final Identifier SET_MULTIPLIER_CHANNEL = new Identifier("custommob", "set_multiplier");
 	public static final Identifier ENTER_CAR_CHANNEL = new Identifier("custommob", "enter_car");
 	public static final Identifier CAR_INPUT_CHANNEL = new Identifier("custommob", "car_input");
+	public static final Identifier FLAMETHROWER_FIRE_CHANNEL = new Identifier("custommob", "flamethrower_fire");
 
 	public static EntityType<CustomCreeperEntity> CUSTOM_CREEPER;
 	public static EntityType<BananaFriendEntity> BANANA_FRIEND;
@@ -256,6 +257,16 @@ public class CustomMobMod implements ModInitializer {
 			server.execute(() -> {
 				if (player.getVehicle() instanceof CarEntity car) {
 					car.setInputs(forward, back, left, right);
+				}
+			});
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(FLAMETHROWER_FIRE_CHANNEL, (server, player, handler, buf, responseSender) -> {
+			server.execute(() -> {
+				ItemStack heldStack = player.getMainHandStack();
+				if (heldStack.getItem() instanceof FlamethrowerItem
+					&& player.getWorld() instanceof net.minecraft.server.world.ServerWorld serverWorld) {
+					FlamethrowerItem.fire(serverWorld, player, heldStack, server.getTicks());
 				}
 			});
 		});

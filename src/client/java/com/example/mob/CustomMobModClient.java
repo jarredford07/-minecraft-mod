@@ -33,6 +33,13 @@ public class CustomMobModClient implements ClientModInitializer {
 		"key.categories.custommob"
 	));
 
+	private static final KeyBinding FLAMETHROWER_KEY = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+		"key.custommob.flamethrower",
+		InputUtil.Type.KEYSYM,
+		GLFW.GLFW_KEY_TAB,
+		"key.categories.custommob"
+	));
+
 	@Override
 	public void onInitializeClient() {
 		EntityRendererRegistry.register(CustomMobMod.CUSTOM_CREEPER, CreeperEntityRenderer::new);
@@ -107,6 +114,10 @@ public class CustomMobModClient implements ClientModInitializer {
 				buf.writeBoolean(client.options.leftKey.isPressed());
 				buf.writeBoolean(client.options.rightKey.isPressed());
 				ClientPlayNetworking.send(CustomMobMod.CAR_INPUT_CHANNEL, buf);
+			}
+
+			if (FLAMETHROWER_KEY.isPressed() && client.player.getMainHandStack().getItem() instanceof FlamethrowerItem) {
+				ClientPlayNetworking.send(CustomMobMod.FLAMETHROWER_FIRE_CHANNEL, PacketByteBufs.create());
 			}
 		});
 
