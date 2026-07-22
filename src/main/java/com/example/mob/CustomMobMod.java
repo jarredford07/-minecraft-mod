@@ -52,6 +52,8 @@ public class CustomMobMod implements ModInitializer {
 
 	public static final CarSpawnerItem CAR_SPAWNER = new CarSpawnerItem(new Item.Settings().maxCount(1));
 
+	public static final FlamethrowerItem FLAMETHROWER = new FlamethrowerItem(new Item.Settings().maxCount(1).maxDamage(500));
+
 	public static IntConsumer extraBlocksBrokenCallback = amount -> {};
 
 	public static final Item BURGER = new Item(new Item.Settings().food(
@@ -135,6 +137,7 @@ public class CustomMobMod implements ModInitializer {
 				.build("car")
 		);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "car_spawner"), CAR_SPAWNER);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "flamethrower"), FLAMETHROWER);
 
 		BIG_TNT_ENTITY = Registry.register(
 			Registries.ENTITY_TYPE,
@@ -192,6 +195,7 @@ public class CustomMobMod implements ModInitializer {
 					entries.add(BANANA_FRIEND_SPAWN_EGG);
 					entries.add(CUBE_FRIEND_SPAWN_EGG);
 					entries.add(CAR_SPAWNER);
+					entries.add(FLAMETHROWER);
 					entries.add(BIG_TNT_ITEM);
 				})
 				.build()
