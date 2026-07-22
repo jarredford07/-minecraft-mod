@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "unstable=false": { "model": "custommob:block/big_tnt" },
+    "unstable=true": { "model": "custommob:block/big_tnt" }
+  }
+}

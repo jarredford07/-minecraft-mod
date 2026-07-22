@@ -45,6 +45,7 @@ public class CustomMobMod implements ModInitializer {
 	public static EntityType<BananaFriendEntity> BANANA_FRIEND;
 	public static EntityType<CubeFriendEntity> CUBE_FRIEND;
 	public static EntityType<CarEntity> CAR;
+	public static EntityType<BigTntEntity> BIG_TNT_ENTITY;
 
 	public static SpawnEggItem BANANA_FRIEND_SPAWN_EGG;
 	public static SpawnEggItem CUBE_FRIEND_SPAWN_EGG;
@@ -71,6 +72,10 @@ public class CustomMobMod implements ModInitializer {
 	public static final BlockItem MULTIPLIER_ITEM = new BlockItem(MULTIPLIER, new Item.Settings());
 
 	public static BlockEntityType<MultiplierBlockEntity> MULTIPLIER_BLOCK_ENTITY;
+
+	public static final Block BIG_TNT = new BigTntBlock(AbstractBlock.Settings.copy(Blocks.TNT));
+
+	public static final BlockItem BIG_TNT_ITEM = new BlockItem(BIG_TNT, new Item.Settings());
 
 	public static final SwordItem EMERALD_SWORD = new SwordItem(EmeraldToolMaterial.INSTANCE, 3, -2.4f, new Item.Settings());
 	public static final EmeraldPickaxeItem EMERALD_PICKAXE = new EmeraldPickaxeItem(new Item.Settings());
@@ -131,6 +136,16 @@ public class CustomMobMod implements ModInitializer {
 		);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "car_spawner"), CAR_SPAWNER);
 
+		BIG_TNT_ENTITY = Registry.register(
+			Registries.ENTITY_TYPE,
+			new Identifier("custommob", "big_tnt"),
+			EntityType.Builder.<BigTntEntity>create(BigTntEntity::new, SpawnGroup.MISC)
+				.setDimensions(2.9f, 2.9f)
+				.build("big_tnt")
+		);
+		Registry.register(Registries.BLOCK, new Identifier("custommob", "big_tnt"), BIG_TNT);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "big_tnt"), BIG_TNT_ITEM);
+
 		Registry.register(Registries.ITEM, new Identifier("custommob", "burger"), BURGER);
 		Registry.register(Registries.ITEM, new Identifier("custommob", "tnt_pickaxe"), TNT_PICKAXE);
 		Registry.register(Registries.BLOCK, new Identifier("custommob", "trampoline"), TRAMPOLINE);
@@ -177,6 +192,7 @@ public class CustomMobMod implements ModInitializer {
 					entries.add(BANANA_FRIEND_SPAWN_EGG);
 					entries.add(CUBE_FRIEND_SPAWN_EGG);
 					entries.add(CAR_SPAWNER);
+					entries.add(BIG_TNT_ITEM);
 				})
 				.build()
 		);

@@ -1,0 +1,22 @@
+{
+  "textures": {
+    "top": "custommob:block/big_tnt_top",
+    "bottom": "custommob:block/big_tnt_bottom",
+    "side": "custommob:block/big_tnt_side",
+    "particle": "custommob:block/big_tnt_side"
+  },
+  "elements": [
+    {
+      "from": [-16, -16, -16],
+      "to": [32, 32, 32],
+      "faces": {
+        "down":  { "uv": [0, 0, 16, 16], "texture": "#bottom" },
+        "up":    { "uv": [0, 0, 16, 16], "texture": "#top" },
+        "north": { "uv": [0, 0, 16, 16], "texture": "#side" },
+        "south": { "uv": [0, 0, 16, 16], "texture": "#side" },
+        "west":  { "uv": [0, 0, 16, 16], "texture": "#side" },
+        "east":  { "uv": [0, 0, 16, 16], "texture": "#side" }
+      }
+    }
+  ]
+}

@@ -46,6 +46,8 @@ public class CustomMobModClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(CarEntityModel.LAYER, CarEntityModel::getTexturedModelData);
 		EntityRendererRegistry.register(CustomMobMod.CAR, CarEntityRenderer::new);
 
+		EntityRendererRegistry.register(CustomMobMod.BIG_TNT_ENTITY, BigTntEntityRenderer::new);
+
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
 			blocksBroken++;
 		});
