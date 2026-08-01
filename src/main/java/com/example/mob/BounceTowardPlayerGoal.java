@@ -13,7 +13,6 @@ public class BounceTowardPlayerGoal extends Goal {
 	private final double followRange;
 	private final double hopStrength;
 	private PlayerEntity target;
-	private int cooldown;
 
 	public BounceTowardPlayerGoal(MobEntity mob, double followRange, double hopStrength) {
 		this.mob = mob;
@@ -47,11 +46,6 @@ public class BounceTowardPlayerGoal extends Goal {
 
 		mob.getLookControl().lookAt(target, 30.0f, 30.0f);
 
-		if (cooldown > 0) {
-			cooldown--;
-			return;
-		}
-
 		if (!mob.isOnGround()) {
 			return;
 		}
@@ -64,6 +58,5 @@ public class BounceTowardPlayerGoal extends Goal {
 
 		mob.setVelocity(direction.x * hopStrength, 0.42, direction.z * hopStrength);
 		mob.velocityModified = true;
-		cooldown = 10;
 	}
 }

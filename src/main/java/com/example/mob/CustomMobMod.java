@@ -45,11 +45,14 @@ public class CustomMobMod implements ModInitializer {
 	public static EntityType<BananaFriendEntity> BANANA_FRIEND;
 	public static EntityType<CubeFriendEntity> CUBE_FRIEND;
 	public static EntityType<BigTntEntity> BIG_TNT_ENTITY;
+	public static EntityType<FireballProjectileEntity> FIREBALL_PROJECTILE;
 
 	public static SpawnEggItem BANANA_FRIEND_SPAWN_EGG;
 	public static SpawnEggItem CUBE_FRIEND_SPAWN_EGG;
 
 	public static final FlamethrowerItem FLAMETHROWER = new FlamethrowerItem(new Item.Settings().maxCount(1).maxDamage(500));
+
+	public static final FireballItem FIREBALL = new FireballItem(new Item.Settings().maxCount(16));
 
 	public static IntConsumer extraBlocksBrokenCallback = amount -> {};
 
@@ -128,6 +131,17 @@ public class CustomMobMod implements ModInitializer {
 
 		Registry.register(Registries.ITEM, new Identifier("custommob", "flamethrower"), FLAMETHROWER);
 
+		FIREBALL_PROJECTILE = Registry.register(
+			Registries.ENTITY_TYPE,
+			new Identifier("custommob", "fireball_projectile"),
+			EntityType.Builder.<FireballProjectileEntity>create(FireballProjectileEntity::new, SpawnGroup.MISC)
+				.setDimensions(0.25f, 0.25f)
+				.maxTrackingRange(4)
+				.trackingTickInterval(10)
+				.build("fireball_projectile")
+		);
+		Registry.register(Registries.ITEM, new Identifier("custommob", "fireball"), FIREBALL);
+
 		BIG_TNT_ENTITY = Registry.register(
 			Registries.ENTITY_TYPE,
 			new Identifier("custommob", "big_tnt"),
@@ -184,6 +198,7 @@ public class CustomMobMod implements ModInitializer {
 					entries.add(BANANA_FRIEND_SPAWN_EGG);
 					entries.add(CUBE_FRIEND_SPAWN_EGG);
 					entries.add(FLAMETHROWER);
+					entries.add(FIREBALL);
 					entries.add(BIG_TNT_ITEM);
 				})
 				.build()

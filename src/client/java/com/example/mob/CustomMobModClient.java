@@ -16,6 +16,7 @@ import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.CreeperEntityRenderer;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
@@ -42,6 +43,8 @@ public class CustomMobModClient implements ClientModInitializer {
 		EntityRendererRegistry.register(CustomMobMod.CUBE_FRIEND, CubeFriendEntityRenderer::new);
 
 		EntityRendererRegistry.register(CustomMobMod.BIG_TNT_ENTITY, BigTntEntityRenderer::new);
+
+		EntityRendererRegistry.register(CustomMobMod.FIREBALL_PROJECTILE, FlyingItemEntityRenderer::new);
 
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
 			blocksBroken++;
