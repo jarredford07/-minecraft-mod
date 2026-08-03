@@ -12,18 +12,21 @@ import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.CreeperEntityRenderer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class CustomMobModClient implements ClientModInitializer {
 
 	public static int blocksBroken = 0;
+	private static boolean randomBlockModeEnabled = false;
 
 	private static final KeyBinding FLAMETHROWER_KEY = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 		"key.custommob.flamethrower",
@@ -63,6 +66,22 @@ public class CustomMobModClient implements ClientModInitializer {
 
 				Screens.getButtons(screen).add(randomizeButton);
 			}
+
+			if (screen instanceof GameMenuScreen) {
+				ButtonWidget randomBlockButton = ButtonWidget.builder(
+					randomBlockButtonText(),
+					button -> {
+						randomBlockModeEnabled = !randomBlockModeEnabled;
+						button.setMessage(randomBlockButtonText());
+
+						PacketByteBuf buf = PacketByteBufs.create();
+						buf.writeBoolean(randomBlockModeEnabled);
+						ClientPlayNetworking.send(CustomMobMod.TOGGLE_RANDOM_BLOCK_CHANNEL, buf);
+					}
+				).dimensions(scaledWidth - 105, 5, 100, 20).build();
+
+				Screens.getButtons(screen).add(randomBlockButton);
+			}
 		});
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -86,5 +105,9 @@ public class CustomMobModClient implements ClientModInitializer {
 				true
 			);
 		});
+	}
+
+	private static Text randomBlockButtonText() {
+		return Text.literal("Random Block: " + (randomBlockModeEnabled ? "ON" : "OFF"));
 	}
 }

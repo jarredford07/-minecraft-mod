@@ -34,12 +34,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.IntConsumer;
 
 public class CustomMobMod implements ModInitializer {
 
 	public static final Identifier SET_MULTIPLIER_CHANNEL = new Identifier("custommob", "set_multiplier");
 	public static final Identifier FLAMETHROWER_FIRE_CHANNEL = new Identifier("custommob", "flamethrower_fire");
+	public static final Identifier TOGGLE_RANDOM_BLOCK_CHANNEL = new Identifier("custommob", "toggle_random_block");
+
+	public static final Set<UUID> RANDOM_BLOCK_MODE_PLAYERS = ConcurrentHashMap.newKeySet();
 
 	public static EntityType<CustomCreeperEntity> CUSTOM_CREEPER;
 	public static EntityType<BananaFriendEntity> BANANA_FRIEND;
@@ -221,11 +227,30 @@ public class CustomMobMod implements ModInitializer {
 
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
 			if (!world.isClient() && player.getAbilities().creativeMode) {
-				net.minecraft.item.Item item = state.getBlock().asItem();
+				net.minecraft.item.Item item;
+				if (RANDOM_BLOCK_MODE_PLAYERS.contains(player.getUuid())) {
+					item = Registries.ITEM.getRandom(world.getRandom())
+						.map(net.minecraft.registry.entry.RegistryEntry.Reference::value)
+						.orElse(net.minecraft.item.Items.AIR);
+				} else {
+					item = state.getBlock().asItem();
+				}
 				if (item != net.minecraft.item.Items.AIR) {
 					player.giveItemStack(new ItemStack(item));
 				}
 			}
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(TOGGLE_RANDOM_BLOCK_CHANNEL, (server, player, handler, buf, responseSender) -> {
+			boolean enabled = buf.readBoolean();
+
+			server.execute(() -> {
+				if (enabled) {
+					RANDOM_BLOCK_MODE_PLAYERS.add(player.getUuid());
+				} else {
+					RANDOM_BLOCK_MODE_PLAYERS.remove(player.getUuid());
+				}
+			});
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(SET_MULTIPLIER_CHANNEL, (server, player, handler, buf, responseSender) -> {
