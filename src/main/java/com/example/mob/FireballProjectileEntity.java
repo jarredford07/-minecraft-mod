@@ -18,7 +18,14 @@ public class FireballProjectileEntity extends ThrownItemEntity {
 	}
 
 	public FireballProjectileEntity(World world, LivingEntity owner) {
-		super(CustomMobMod.FIREBALL_PROJECTILE, owner, world);
+		super(
+			CustomMobMod.FIREBALL_PROJECTILE,
+			owner.getX() + owner.getRotationVector().x,
+			owner.getEyeY() - 0.1 + owner.getRotationVector().y * 0.5,
+			owner.getZ() + owner.getRotationVector().z,
+			world
+		);
+		this.setOwner(owner);
 	}
 
 	@Override
