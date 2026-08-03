@@ -219,6 +219,15 @@ public class CustomMobMod implements ModInitializer {
 			}
 		});
 
+		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
+			if (!world.isClient() && player.getAbilities().creativeMode) {
+				net.minecraft.item.Item item = state.getBlock().asItem();
+				if (item != net.minecraft.item.Items.AIR) {
+					player.giveItemStack(new ItemStack(item));
+				}
+			}
+		});
+
 		ServerPlayNetworking.registerGlobalReceiver(SET_MULTIPLIER_CHANNEL, (server, player, handler, buf, responseSender) -> {
 			BlockPos pos = buf.readBlockPos();
 			int value = buf.readInt();
