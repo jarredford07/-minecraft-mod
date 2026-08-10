@@ -11,6 +11,9 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -21,12 +24,15 @@ import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class CustomMobModClient implements ClientModInitializer {
 
 	public static int blocksBroken = 0;
 	private static boolean randomBlockModeEnabled = false;
+
+	public static final Identifier NASHIFIED_PACK_ID = new Identifier("custommob", "nashified");
 
 	private static final KeyBinding FLAMETHROWER_KEY = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 		"key.custommob.flamethrower",
@@ -49,6 +55,15 @@ public class CustomMobModClient implements ClientModInitializer {
 
 		EntityRendererRegistry.register(CustomMobMod.FIREBALL_PROJECTILE, FlyingItemEntityRenderer::new);
 
+		FabricLoader.getInstance().getModContainer("custommob").ifPresent(container ->
+			ResourceManagerHelper.registerBuiltinResourcePack(
+				NASHIFIED_PACK_ID,
+				container,
+				"Nashified",
+				ResourcePackActivationType.NORMAL
+			)
+		);
+
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
 			blocksBroken++;
 		});
@@ -65,6 +80,27 @@ public class CustomMobModClient implements ClientModInitializer {
 				).dimensions(scaledWidth - 105, 5, 100, 20).build();
 
 				Screens.getButtons(screen).add(randomizeButton);
+
+				ButtonWidget nashifiedButton = ButtonWidget.builder(
+					nashifiedButtonText(client),
+					button -> {
+						boolean currentlyEnabled = client.getResourcePackManager()
+							.getEnabledNames().contains(NASHIFIED_PACK_ID.toString());
+
+						if (currentlyEnabled) {
+							client.getResourcePackManager().disable(NASHIFIED_PACK_ID.toString());
+						} else {
+							client.getResourcePackManager().enable(NASHIFIED_PACK_ID.toString());
+						}
+
+						client.options.refreshResourcePacks(client.getResourcePackManager());
+						client.options.write();
+						client.reloadResources();
+						button.setMessage(nashifiedButtonText(client));
+					}
+				).dimensions(scaledWidth - 105, 30, 100, 20).build();
+
+				Screens.getButtons(screen).add(nashifiedButton);
 			}
 
 			if (screen instanceof GameMenuScreen) {
@@ -109,5 +145,10 @@ public class CustomMobModClient implements ClientModInitializer {
 
 	private static Text randomBlockButtonText() {
 		return Text.literal("Random Block: " + (randomBlockModeEnabled ? "ON" : "OFF"));
+	}
+
+	private static Text nashifiedButtonText(MinecraftClient client) {
+		boolean enabled = client.getResourcePackManager().getEnabledNames().contains(NASHIFIED_PACK_ID.toString());
+		return Text.literal("Nashified: " + (enabled ? "ON" : "OFF"));
 	}
 }
