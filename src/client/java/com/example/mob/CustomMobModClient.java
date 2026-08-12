@@ -95,8 +95,12 @@ public class CustomMobModClient implements ClientModInitializer {
 
 						client.options.refreshResourcePacks(client.getResourcePackManager());
 						client.options.write();
-						client.reloadResources();
 						button.setMessage(nashifiedButtonText(client));
+
+						// Deferred to the next tick rather than run synchronously inside this
+						// mouse-click callback - triggering a full resource reload mid-click
+						// event processing risked leaving GUI/input state inconsistent.
+						client.execute(client::reloadResources);
 					}
 				).dimensions(scaledWidth - 105, 30, 100, 20).build();
 
