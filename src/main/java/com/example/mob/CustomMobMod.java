@@ -226,15 +226,30 @@ public class CustomMobMod implements ModInitializer {
 		});
 
 		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
-			if (!world.isClient() && player.getAbilities().creativeMode) {
+			if (world.isClient()) {
+				return;
+			}
+
+			boolean randomBlockMode = RANDOM_BLOCK_MODE_PLAYERS.contains(player.getUuid());
+
+			if (player.getAbilities().creativeMode) {
 				net.minecraft.item.Item item;
-				if (RANDOM_BLOCK_MODE_PLAYERS.contains(player.getUuid())) {
+				if (randomBlockMode) {
 					item = Registries.ITEM.getRandom(world.getRandom())
 						.map(net.minecraft.registry.entry.RegistryEntry.Reference::value)
 						.orElse(net.minecraft.item.Items.AIR);
 				} else {
 					item = state.getBlock().asItem();
 				}
+				if (item != net.minecraft.item.Items.AIR) {
+					player.giveItemStack(new ItemStack(item));
+				}
+			} else if (randomBlockMode) {
+				// Survival already drops the block's normal item via vanilla loot tables -
+				// Random Block here is a bonus surprise item on top, not a replacement.
+				net.minecraft.item.Item item = Registries.ITEM.getRandom(world.getRandom())
+					.map(net.minecraft.registry.entry.RegistryEntry.Reference::value)
+					.orElse(net.minecraft.item.Items.AIR);
 				if (item != net.minecraft.item.Items.AIR) {
 					player.giveItemStack(new ItemStack(item));
 				}
