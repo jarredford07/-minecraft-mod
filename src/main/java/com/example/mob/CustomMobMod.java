@@ -3,6 +3,7 @@ package com.example.mob;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -296,6 +297,8 @@ public class CustomMobMod implements ModInitializer {
 		});
 
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register(BigKnockbackHandler::onAllowDamage);
+
+		UseEntityCallback.EVENT.register(MinecartBlockHandler::onUseEntity);
 
 		System.out.println("Custom Mob Mod initialized!");
 	}
